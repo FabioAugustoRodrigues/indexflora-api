@@ -1,0 +1,11 @@
+name: indexflora-api
+version: '3.8'
+
+services:
+  python:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.Python.Dev
+    restart: unless-stopped
+    ports:
+      - 8400:8000
