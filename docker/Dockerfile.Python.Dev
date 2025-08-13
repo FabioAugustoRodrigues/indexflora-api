@@ -18,6 +18,8 @@ RUN . /srv/.venv/bin/activate && \
 	pydantic \
 	pyjwt \
 	passlib \
+	pymysql \
+	cryptography \
 	&& deactivate
 
 ENTRYPOINT . /srv/.venv/bin/activate && \
