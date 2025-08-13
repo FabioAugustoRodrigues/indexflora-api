@@ -5,7 +5,8 @@ WORKDIR /srv
 
 RUN apk add \
 	python3 \
-	py3-pip
+	py3-pip \
+    redis
 
 RUN pip3 install virtualenv && \
 	virtualenv .venv
@@ -20,6 +21,8 @@ RUN . /srv/.venv/bin/activate && \
 	passlib \
 	pymysql \
 	cryptography \
+	redis \
+	redisearch \
 	&& deactivate
 
 ENTRYPOINT . /srv/.venv/bin/activate && \
