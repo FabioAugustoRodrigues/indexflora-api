@@ -43,3 +43,14 @@ class RedisSearchService:
             raise e
 
         return {"message": f"Index '{index_name}' created successfully"}
+
+    def add_document(self, index_name: str, document_id: str, fields: dict):
+        client = Client(index_name, conn=self.redis_connection)
+        try:
+            client.redis.hset(f"{index_name}:{document_id}", mapping=fields)
+            return {
+                "message": f"Document '{document_id}' indexed successfully",
+                "key": f"{index_name}:{document_id}"
+            }
+        except Exception as e:
+            return {"error": str(e)}
