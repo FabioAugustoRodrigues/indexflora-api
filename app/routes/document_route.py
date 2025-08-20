@@ -21,3 +21,25 @@ def index_document(req: IndexDocumentRequest):
         "message": "Document indexed successfully",
         "redisearch": redis_result
     }
+
+@router.get("/search/")
+def search_documents(
+    schema_name: str,
+    term: str,
+    limit: int = 10,
+    offset: int = 0
+):
+    try:
+        redis_result = redisSearchService.search_documents(
+            index_name=f"idx:{schema_name.lower()}",
+            term=term,
+            limit=limit,
+            offset=offset
+        )
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"There was an error searching: {e}")
+
+    return {
+        "message": "Search completed successfully",
+        "redisearch": redis_result
+    }

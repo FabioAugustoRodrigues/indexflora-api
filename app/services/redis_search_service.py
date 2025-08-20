@@ -1,5 +1,5 @@
 import redis
-from redisearch import Client, TextField, NumericField, TagField, IndexDefinition
+from redisearch import Client, TextField, NumericField, TagField, IndexDefinition, Query
 
 class RedisSearchService:
     def __init__(self, host="localhost", port=6379):
@@ -51,6 +51,32 @@ class RedisSearchService:
             return {
                 "message": f"Document '{document_id}' indexed successfully",
                 "key": f"{index_name}:{document_id}"
+            }
+        except Exception as e:
+            return {"error": str(e)}
+ 
+    def search_documents(self, index_name: str, term: str, limit: int = 10, offset: int = 0):
+        client = Client(index_name, conn=self.redis_connection)
+        try:
+            # Escape the term to avoid syntax issues
+            safe_term = term.replace("-", "\\-").replace(":", "\\:")
+
+            # Create a RediSearch query that matches the term anywhere
+            query = Query(safe_term).paging(offset, limit).with_scores()
+
+            results = client.search(query)
+
+            docs = []
+            for doc in results.docs:
+                docs.append({
+                    "id": doc.id,
+                    "fields": {k: v for k, v in doc.__dict__.items() if not k.startswith("__")},
+                    "score": doc.score
+                })
+
+            return {
+                "total": results.total,
+                "documents": docs
             }
         except Exception as e:
             return {"error": str(e)}
