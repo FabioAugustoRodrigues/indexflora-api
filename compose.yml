@@ -11,6 +11,9 @@ services:
       - 8400:8000
     depends_on:
       - redis
+    volumes:
+      - .:/srv
+      - /srv/.venv
 
   redis:
     image: redis/redis-stack:latest
