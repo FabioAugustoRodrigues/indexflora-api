@@ -1,9 +1,9 @@
 from app.models.schema_model import SearchSchemaModel
 from app.services.schema_validator_service import SchemaValidatorService
-from app.services.redis_search_service import RedisSearchService
+from app.infrastructure.redis.redis_search_client import RedisSearchClient
 
 class DocumentIndexerService:
-    def __init__(self, redisSearchService: RedisSearchService):
+    def __init__(self, redisSearchService: RedisSearchClient):
         self.redisSearchService = redisSearchService
 
     def index_document(self, index_name: str, document_id: str, fields: dict):

@@ -1,8 +1,8 @@
 import redis
 from redisearch import Client, TextField, NumericField, TagField, IndexDefinition, Query
 
-class RedisSearchService:
-    def __init__(self, host="localhost", port=6379):
+class RedisSearchClient:
+    def __init__(self, host="redis", port=6379):
         self.redis_connection = redis.Redis(host=host, port=port, decode_responses=True)
 
     def create_index(self, index_name: str, fields: list):

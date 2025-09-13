@@ -1,12 +1,13 @@
 from fastapi import APIRouter, HTTPException
 
 from app.schemas.document import IndexDocumentRequest
-from app.services.redis_search_service import RedisSearchService
+from app.infrastructure.redis.redis_search_client import RedisSearchClient
 from app.services.document_indexer_service import DocumentIndexerService
+from app.configs.settings import settings
 
 router = APIRouter()
 
-redisSearchService = RedisSearchService(host=settings.REDIS_HOST, port=settings.REDIS_PORT)
+redisSearchService = RedisSearchClient(host=settings.REDIS_HOST, port=settings.REDIS_PORT)
 documentIndexerService = DocumentIndexerService(redisSearchService)
 
 @router.post("/")
