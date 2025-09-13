@@ -18,6 +18,8 @@ def create_schema(req: CreateSchemaRequest):
         fields=json.dumps([field.dict() for field in req.fields])
     )
 
+    schema.save()
+
     redis_result = redisSearchService.create_index(
         index_name=f"idx:{req.name.lower()}",
         fields=[field.dict() for field in req.fields]
