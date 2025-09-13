@@ -10,4 +10,7 @@ class Settings:
     MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD", "root")
     MYSQL_DB = os.getenv("MYSQL_DB", "search_engine")
 
+    REDIS_HOST = os.getenv("REDIS_HOST", "redis")
+    REDIS_PORT = os.getenv("REDIS_PORT", "6379")
+
 settings = Settings()

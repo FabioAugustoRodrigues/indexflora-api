@@ -5,7 +5,7 @@ from app.schemas.response import create_success_response, create_error_response
 from app.services.schema_service import SchemaService
 
 router = APIRouter()
-schema_service = SchemaService(redis_host="redis", redis_port=6379)
+schema_service = SchemaService()
 
 @router.post("/")
 def create_schema(req: CreateSchemaRequest):

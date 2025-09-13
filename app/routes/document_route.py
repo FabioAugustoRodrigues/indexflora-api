@@ -6,7 +6,7 @@ from app.services.document_indexer_service import DocumentIndexerService
 
 router = APIRouter()
 
-redisSearchService = RedisSearchService(host="redis", port=6379)
+redisSearchService = RedisSearchService(host=settings.REDIS_HOST, port=settings.REDIS_PORT)
 documentIndexerService = DocumentIndexerService(redisSearchService)
 
 @router.post("/")
