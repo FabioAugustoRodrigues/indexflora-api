@@ -1,5 +1,5 @@
 from app.models.schema_model import SearchSchemaModel
-from app.services.schema_validator_service import SchemaValidatorService
+from app.validators.schema_validator import SchemaValidator
 from app.infrastructure.redis.redis_search_client import RedisSearchClient
 
 class DocumentIndexerService:
@@ -11,7 +11,7 @@ class DocumentIndexerService:
         warning = None
 
         if schema:
-            extra, missing = SchemaValidatorService.validate(fields, schema.fields)
+            extra, missing = SchemaValidator.validate(fields, schema.fields)
             if extra or missing:
                 warning = {"extra_fields": extra, "missing_fields": missing}
         else:

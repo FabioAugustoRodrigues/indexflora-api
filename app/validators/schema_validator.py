@@ -1,6 +1,6 @@
 import json
 
-class SchemaValidatorService:
+class SchemaValidator:
     @staticmethod
     def validate(document: dict, schema_fields):
         expected_field_names = [f["name"] for f in schema_fields]
@@ -9,4 +9,3 @@ class SchemaValidatorService:
         missing_fields = [name for name in expected_field_names if name not in document]
 
         return extra_fields, missing_fields
-
