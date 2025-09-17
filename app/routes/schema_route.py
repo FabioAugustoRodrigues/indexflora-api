@@ -9,12 +9,14 @@ schema_service = SchemaService()
 
 @router.post("/")
 def create_schema(req: CreateSchemaRequest):
-    response_data = schema_service.create_schema(
+    index_name = schema_service.create_schema(
         name=req.name,
         fields=[field.dict() for field in req.fields]
     )
 
     return create_success_response(
-        data=response_data,
+        data={
+            "index_name": index_name
+        },
         message="Schema created successfully and index created in Redisearch"
     )

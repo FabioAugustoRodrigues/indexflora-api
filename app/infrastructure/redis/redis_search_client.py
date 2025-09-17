@@ -1,5 +1,7 @@
-import redis
 from redisearch import Client, TextField, NumericField, TagField, IndexDefinition, Query
+import redis
+
+from fastapi import HTTPException
 
 class RedisSearchClient:
     def __init__(self, host="redis", port=6379):
@@ -28,7 +30,7 @@ class RedisSearchClient:
                     sortable=f.get("sortable", False)
                 ))
             else:
-                raise ValueError(f"Unsupported field type: {f['type']}")
+                raise HTTPException(status_code=400, detail=f"Unsupported field type: {f['type']}")
 
         try:
             client.create_index(
@@ -39,21 +41,17 @@ class RedisSearchClient:
             )
         except Exception as e:
             if "Index already exists" in str(e):
-                return {"message": f"Index '{index_name}' already exists"}
-            raise e
-
-        return {"message": f"Index '{index_name}' created successfully"}
+                raise HTTPException(status_code=409, detail=f"Index '{index_name}' already exists")
+            raise HTTPException(status_code=500, detail=str(e))
 
     def add_document(self, index_name: str, document_id: str, fields: dict):
         client = Client(index_name, conn=self.redis_connection)
         try:
             client.redis.hset(f"{index_name}:{document_id}", mapping=fields)
-            return {
-                "message": f"Document '{document_id}' indexed successfully",
-                "key": f"{index_name}:{document_id}"
-            }
+
+            return f"{index_name}:{document_id}"
         except Exception as e:
-            return {"error": str(e)}
+            raise HTTPException(status_code=500, detail=str(e))
  
     def search_documents(self, index_name: str, term: str, limit: int = 10, offset: int = 0):
         client = Client(index_name, conn=self.redis_connection)
@@ -79,4 +77,4 @@ class RedisSearchClient:
                 "documents": docs
             }
         except Exception as e:
-            return {"error": str(e)}
+            raise HTTPException(status_code=500, detail=str(e))

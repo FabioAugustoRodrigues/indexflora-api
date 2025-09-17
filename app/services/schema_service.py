@@ -17,12 +17,9 @@ class SchemaService:
 
         schema.save()
 
-        redis_result = self.redis_client.create_index(
+        self.redis_client.create_index(
             index_name=f"idx:{name.lower()}",
             fields=fields
         )
 
-        return {
-            "index_name": schema.redis_index_name,
-            "redisearch": redis_result
-        }
+        return schema.redis_index_name
