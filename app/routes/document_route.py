@@ -1,15 +1,13 @@
 from fastapi import APIRouter, HTTPException
 
 from app.schemas.document import IndexDocumentRequest
-from app.infrastructure.redis.redis_search_client import RedisSearchClient
 from app.services.document_service import DocumentService
 from app.schemas.response import create_success_response, create_error_response
 from app.configs.settings import settings
 
 router = APIRouter()
 
-redisSearchService = RedisSearchClient(host=settings.REDIS_HOST, port=settings.REDIS_PORT)
-document_service = DocumentService(redisSearchService)
+document_service = DocumentService()
 
 @router.post("/")
 def index_document(req: IndexDocumentRequest):
@@ -35,7 +33,7 @@ def search_documents(
 ):
     return create_success_response(
         data={
-            "results": redisSearchService.search_documents(
+            "results": document_service.search_documents(
                 index_name=f"idx:{schema_name.lower()}",
                 term=term,
                 limit=limit,
