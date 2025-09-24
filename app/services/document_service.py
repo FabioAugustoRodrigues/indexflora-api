@@ -20,3 +20,6 @@ class DocumentService:
         index_name = self.redisSearchService.add_document(index_name, document_id, fields)
 
         return index_name
+
+    def search_document(self, index_name: str, term: str, limit: int = 10, offset: int = 0):
+        return self.redisSearchService.search_documents(index_name, term, limit, offset)
