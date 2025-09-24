@@ -2,29 +2,29 @@ from fastapi import APIRouter, HTTPException
 
 from app.schemas.document import IndexDocumentRequest
 from app.infrastructure.redis.redis_search_client import RedisSearchClient
-from app.services.document_indexer_service import DocumentIndexerService
+from app.services.document_service import DocumentService
+from app.schemas.response import create_success_response, create_error_response
 from app.configs.settings import settings
 
 router = APIRouter()
 
 redisSearchService = RedisSearchClient(host=settings.REDIS_HOST, port=settings.REDIS_PORT)
-documentIndexerService = DocumentIndexerService(redisSearchService)
+document_service = DocumentService(redisSearchService)
 
 @router.post("/")
 def index_document(req: IndexDocumentRequest):
-    try:
-        result = documentIndexerService.index_document(
-            index_name=f"idx:{req.schema_name.lower()}",
-            document_id=req.document_id,
-            fields=req.fields
-        )
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"There was an error indexing: {e}")
+    index_name = document_service.index_document(
+        index_name=f"idx:{req.schema_name.lower()}",
+        document_id=req.document_id,
+        fields=req.fields
+    )
 
-    return {
-        "message": "Document indexed successfully",
-        "redisearch": result
-    }
+    return create_success_response(
+        data={
+            "index_name": index_name
+        },
+        message="Document indexed successfully"
+    )
 
 @router.get("/search/")
 def search_documents(

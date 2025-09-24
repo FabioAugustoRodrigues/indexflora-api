@@ -2,7 +2,7 @@ from app.models.schema_model import SearchSchemaModel
 from app.validators.schema_validator import SchemaValidator
 from app.infrastructure.redis.redis_search_client import RedisSearchClient
 
-class DocumentIndexerService:
+class DocumentService:
     def __init__(self, redisSearchService: RedisSearchClient):
         self.redisSearchService = redisSearchService
 
@@ -17,7 +17,6 @@ class DocumentIndexerService:
         else:
             warning = {"warning": f"Schema for index '{index_name}' not found."}
 
-        result = self.redisSearchService.add_document(index_name, document_id, fields)
-        if warning:
-            result["warning"] = warning
-        return result
+        index_name = self.redisSearchService.add_document(index_name, document_id, fields)
+
+        return index_name
