@@ -9,6 +9,14 @@ router = APIRouter()
 
 document_service = DocumentService()
 
+"""
+
+O QUE FAZER DEPOIS
+
+MELHORE O RETORNO DOS DOCUMENTOS
+
+"""
+
 @router.post("/")
 def index_document(req: IndexDocumentRequest):
     index_name = document_service.index_document(
@@ -32,13 +40,11 @@ def search_documents(
     offset: int = 0
 ):
     return create_success_response(
-        data={
-            "results": document_service.search_documents(
-                index_name=f"idx:{schema_name.lower()}",
-                term=term,
-                limit=limit,
-                offset=offset
-            )
-        },
+        data=document_service.search_documents(
+            index_name=f"idx:{schema_name.lower()}",
+            term=term,
+            limit=limit,
+            offset=offset
+        ),
         message="Search completed successfully"
     )

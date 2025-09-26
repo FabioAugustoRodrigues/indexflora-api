@@ -66,9 +66,14 @@ class RedisSearchClient:
 
             docs = []
             for doc in results.docs:
+                cleaned_fields = {
+                    k: v for k, v in doc.__dict__.items()
+                    if not k.startswith("__") and k not in ["id", "score"]
+                }
+
                 docs.append({
                     "id": doc.id,
-                    "fields": {k: v for k, v in doc.__dict__.items() if not k.startswith("__")},
+                    "fields": cleaned_fields,
                     "score": doc.score
                 })
 
