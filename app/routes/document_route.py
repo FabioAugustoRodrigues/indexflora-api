@@ -9,14 +9,6 @@ router = APIRouter()
 
 document_service = DocumentService()
 
-"""
-
-O QUE FAZER DEPOIS
-
-MELHORE O RETORNO DOS DOCUMENTOS
-
-"""
-
 @router.post("/")
 def index_document(req: IndexDocumentRequest):
     index_name = document_service.index_document(
