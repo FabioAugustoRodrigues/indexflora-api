@@ -3,6 +3,8 @@ import redis
 
 from fastapi import HTTPException
 
+import re
+
 class RedisSearchClient:
     def __init__(self, host="redis", port=6379):
         self.redis_connection = redis.Redis(host=host, port=port, decode_responses=True)
@@ -53,29 +55,32 @@ class RedisSearchClient:
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
  
+    def escape_term(self, term: str) -> str:
+        """Escape special characters in RediSearch queries."""
+        return re.sub(r'([\-@|*~:])', r'\\\1', term)
+
     def search_documents(self, index_name: str, term: str, limit: int = 10, offset: int = 0):
         client = Client(index_name, conn=self.redis_connection)
         try:
-            # Escape the term to avoid syntax issues
-            safe_term = term.replace("-", "\\-").replace(":", "\\:")
+            # Split term into words and escape each
+            terms = [self.escape_term(t) + "*" for t in term.strip().split()]
 
-            # Create a RediSearch query that matches the term anywhere
-            query = Query(safe_term).paging(offset, limit).with_scores()
+            # Combine terms with OR to match any word
+            query_str = " | ".join(terms)
 
+            # Create query with pagination and scores
+            query = Query(query_str).paging(offset, limit).with_scores()
             results = client.search(query)
 
-            docs = []
-            for doc in results.docs:
-                cleaned_fields = {
-                    k: v for k, v in doc.__dict__.items()
-                    if not k.startswith("__") and k not in ["id", "score"]
-                }
-
-                docs.append({
+            # Build document list
+            docs = [
+                {
                     "id": doc.id,
-                    "fields": cleaned_fields,
+                    "fields": {k: v for k, v in doc.__dict__.items() if not k.startswith("__") and k not in ["id", "score"]},
                     "score": doc.score
-                })
+                }
+                for doc in results.docs
+            ]
 
             return {
                 "total": results.total,
