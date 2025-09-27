@@ -1,4 +1,5 @@
 from app.models.schema_model import SearchSchemaModel
+from app.models.log_model import SearchLogModel
 from app.validators.schema_validator import SchemaValidator
 from app.infrastructure.redis.redis_search_client import RedisSearchClient
 from app.configs.settings import settings
@@ -15,6 +16,9 @@ class DocumentService:
 
     def search_documents(self, index_name: str, term: str, limit: int = 10, offset: int = 0):
         return self.redis_client.search_documents(index_name, term, limit, offset)
+
+    def log_search(self, redis_index_name: str, parameters: str, duration_ms: int):
+        SearchLogModel(redis_index_name, parameters, duration_ms).save()
 
     def check_for_fields_in_schema(self, index_name: str, fields: dict):
         schema = SearchSchemaModel.get_by_redis_index_name(index_name)
