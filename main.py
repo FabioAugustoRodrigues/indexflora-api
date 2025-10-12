@@ -19,7 +19,7 @@ async def global_exception_handler(request: Request, exc: Exception):
         content=create_error_response(
             message="Internal server error",
             errors=[str(exc)]
-        ).dict(exclude_none=True)
+        ).model_dump(exclude_none=True)
     )
 
 @app.exception_handler(HTTPException)
@@ -29,7 +29,7 @@ async def http_exception_handler(request: Request, exc: HTTPException):
         content=create_error_response(
             message=exc.detail,
             errors=[exc.detail]
-        ).dict(exclude_none=True)
+        ).model_dump(exclude_none=True)
     )
 
 app.include_router(schema_route, prefix="/schemas", tags=["Schemas"])

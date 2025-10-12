@@ -11,7 +11,7 @@ schema_service = SchemaService()
 def create_schema(req: CreateSchemaRequest):
     index_name = schema_service.create_schema(
         name=req.name,
-        fields=[field.dict() for field in req.fields]
+        fields=[field.model_dump() for field in req.fields]
     )
 
     return create_success_response(

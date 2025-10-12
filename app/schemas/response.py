@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Generic, TypeVar, Optional, List, Any
 from enum import Enum
 
@@ -15,8 +15,7 @@ class BaseResponse(BaseModel, Generic[T]):
     errors: Optional[List[str]] = None
     metadata: Optional[dict] = None
 
-    class Config:
-        use_enum_values = True
+    model_config = ConfigDict(use_enum_values=True)
 
 class SuccessResponse(BaseResponse[T]):
     status: ResponseStatus = ResponseStatus.SUCCESS

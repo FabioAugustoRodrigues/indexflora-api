@@ -23,6 +23,9 @@ RUN . /srv/.venv/bin/activate && \
 	cryptography \
 	redis \
 	redisearch \
+	pytest \
+	httpx \
+	pytest-asyncio \
 	&& deactivate
 
 ENTRYPOINT . /srv/.venv/bin/activate && \
